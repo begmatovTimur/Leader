@@ -56,7 +56,6 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void addStudentCourse(Student savedStudent, Course studentCourse) {
-        System.out.println("salom");
         LocalDate currentDate = LocalDate.now();
         List<Month> months = monthRepository.findAll();
         int reqMonth = 0;

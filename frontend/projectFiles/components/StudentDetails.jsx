@@ -122,7 +122,7 @@ export default function StudentDetailsPage({route,navigation}) {
                             }}
                         >
                             <CheckBox
-                                checked={item.active}
+                                checked={item.paymentAmount===item.coursePrice}
                                 onPress={()=>changeActiveStudent(item.active, item.id)}
                             />
                             <Text>To'lov Qiymati: {item.paymentAmount}</Text>

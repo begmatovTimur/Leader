@@ -111,6 +111,7 @@ const Students = ({route, navigation}) => {
                     });
             } else {
                 alert("bo'sh joylarni to'ldiring")
+                setIsLoading(false)
             }
         } else {
             if (firstName !== "" && lastName !== "" && age !== "" && courseName !== "") {
@@ -138,6 +139,7 @@ const Students = ({route, navigation}) => {
                 })
             } else {
                 alert("bo'sh joylarni to'ldiring")
+                setIsLoading(false)
             }
         }
     }
