@@ -95,13 +95,13 @@ const Students = ({route, navigation}) => {
                     .then((response) => response.json())
                     .then((responseData) => {
                         if (responseData === "success") {
-                            setModalVisible(false)
-                            reset()
-                            setCurrentStudentId("")
-                            getStudents()
-                            getExcelData()
                             setIsLoading(false)
                             setIsEdit(false)
+                            setModalVisible(false)
+                            setCurrentStudentId("")
+                            reset()
+                            getStudents()
+                            getExcelData()
                         } else {
                             alert("siz studentni o'zgartira olmaysiz")
                         }
@@ -126,16 +126,16 @@ const Students = ({route, navigation}) => {
                 })
                     .then((response) => response.json())
                     .then((responseData) => {
+                        setIsLoading(false)
                         setModalVisible(false)
-                        getStudents()
                         setCurrentStudentId("")
                         reset()
-                        setIsLoading(false)
+                        getStudents()
+                        getExcelData()
 
                     }).catch((e) => {
                     navigation.navigate("Error")
                 })
-                getExcelData()
             } else {
                 alert("bo'sh joylarni to'ldiring")
             }
@@ -168,7 +168,10 @@ const Students = ({route, navigation}) => {
         if (text !== "") {
             fetch(baseUrl("student/filter/" + text))
                 .then((resp) => resp.json())
-                .then((json) => setStudents(json))
+                .then((json) => {
+                    setStudents(json)
+                    getExcelData()
+                })
                 .catch((error) => console.error(error))
         } else {
             getStudents()
