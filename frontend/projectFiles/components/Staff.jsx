@@ -136,11 +136,14 @@ const Staff = ({navigation, route}) => {
             .then((responseData) => {
                 if (responseData === "success") {
                     getUsers()
-                } else if (responseData === "error") {
-                    alert("Mentorni o'chirish mumkin emas! Chunki u boshqa kursga bog'langan yoki siz uchun o'chirishga ruxsat yo'q")
-                } else {
+                    setIsLoading(false)
+                    return;
+                } else if (responseData === "owner-delete-error") {
                     alert("Super adminni o'chirish mumkin emas")
+                    setIsLoading(false)
+                    return;
                 }
+                alert("mentorni o'chirish mumkin emas, chunki u boshqa kursga bog'langan")
                 setIsLoading(false)
             }).catch((e) => {
             alert("error!")

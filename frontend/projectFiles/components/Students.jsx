@@ -104,6 +104,7 @@ const Students = ({route, navigation}) => {
                             getExcelData()
                         } else {
                             alert("siz studentni o'zgartira olmaysiz")
+                            setIsLoading(false)
                         }
                     })
                     .catch((e) => {
