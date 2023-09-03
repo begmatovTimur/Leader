@@ -21,9 +21,8 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
     List<CourseProjection> getStudentCourses(UUID id);
 
     @Query(value = """
-            select sc.id, sc.active, sc.payment_amount, c.price, s.first_name, m.name as month_name, TO_CHAR(sc.payed_at, 'YYYY-"yil" DD-Month') AS payed_at
+            select sc.id, sc.active, sc.payment_amount s.first_name, m.name as month_name, TO_CHAR(sc.payed_at, 'YYYY-"yil" DD-Month') AS payed_at
                                                              from student_course sc
-                                                                      inner join course c on c.id = sc.course_id
                                                                       inner join student s on s.id = sc.student_id
                                                                       inner join month m on sc.month_id = m.id
             where c.id = :courseId and s.id = :studentId order by sc.id asc
