@@ -49,6 +49,12 @@ public class StudentController {
     }
 
     @SneakyThrows
+    @GetMapping("/{id}")
+    public String getStudentByGroup(@PathVariable String id){
+        return new ObjectMapper().writeValueAsString(studentService.getStudentsByGroup(UUID.fromString(id)));
+    }
+
+    @SneakyThrows
     @PostMapping
     public String addStudent(@RequestBody StudentDTO studentDTO) {
         studentService.addStudent(studentDTO);

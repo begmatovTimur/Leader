@@ -80,6 +80,11 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public List<Student> getStudentsByGroup(UUID id) {
+        return studentRepository.getStudentsByGroup(id);
+    }
+
+    @Override
     public List<CourseProjection> getStudentCourses(UUID studentId) {
         return studentRepository.getStudentCourses(studentId);
     }

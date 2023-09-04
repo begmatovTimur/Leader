@@ -30,12 +30,12 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
     List<StudentCourseProjection> getStudentCourse(UUID courseId, UUID studentId);
 
     @Query(value = """
-SELECT *
-FROM student
-WHERE LOWER(first_name) LIKE LOWER('%' || :filterText || '%')
-   OR LOWER(last_name) LIKE LOWER('%' || :filterText || '%');
+            SELECT *
+            FROM student
+            WHERE LOWER(first_name) LIKE LOWER('%' || :filterText || '%')
+               OR LOWER(last_name) LIKE LOWER('%' || :filterText || '%');
 
-""", nativeQuery = true)
+            """, nativeQuery = true)
     List<Student> filterByFirstNameOrLastNameBySimilarity(String filterText);
 
     @Query(value = """
@@ -59,4 +59,14 @@ WHERE LOWER(first_name) LIKE LOWER('%' || :filterText || '%')
                          s.first_name, s.last_name, s.age;                                         
                    """, nativeQuery = true)
     List<StudentProjection> convertToExcelFile();
+
+    @Query(value = """
+            select s.id, s.age, s.first_name, s.last_name
+            from student s
+                     inner join student_course sc on s.id = sc.student_id
+                     inner join course c on c.id = sc.course_id
+            where sc.course_id = :id
+            group by s.id, s.age, s.first_name, s.last_name
+            """, nativeQuery = true)
+    List<Student> getStudentsByGroup(UUID id);
 }

@@ -4,7 +4,7 @@ import baseUrl from "../baseUrl/baseUrl";
 import {Button} from "@rneui/base";
 
 export default function StudentSubjects({route, navigation}) {
-    const {studentId, loginUserId} = route.params
+    const {studentId, loginUserId, studentName} = route.params
     const [courses, setCourses] = useState([])
 
     useEffect(()=>{
@@ -17,7 +17,7 @@ export default function StudentSubjects({route, navigation}) {
     return (
         <View style={styles.container}>
             {
-                courses.map(item=><Button onPress={()=>navigation.navigate("O'quvchining to'liqroq ma'lumoti", {studentId, courseId:item.id, loginUserId})}>{item.name}</Button>)
+                courses.map(item=><Button onPress={()=>navigation.navigate("O'quvchining to'liqroq ma'lumoti", {studentId, courseId:item.id, loginUserId, studentName})}>{item.name}</Button>)
             }
         </View>
     )

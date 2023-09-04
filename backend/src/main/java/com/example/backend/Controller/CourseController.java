@@ -29,6 +29,12 @@ public class CourseController {
     }
 
     @SneakyThrows
+    @GetMapping("/filter")
+    public String getCoursesForFilter(){
+        return new ObjectMapper().writeValueAsString(courseService.getCoursesForFilter());
+    }
+
+    @SneakyThrows
     @PostMapping
     public String addCourse(@RequestBody CourseDTO courseDTO) {
         courseService.addCourse(courseDTO);

@@ -8,6 +8,8 @@ import {blue600} from "react-native-paper/src/styles/themes/v2/colors";
 import * as XLSX from 'xlsx';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import {Picker} from "react-native-web";
+
 
 const Students = ({route, navigation}) => {
     const loginUserId = route.params
@@ -18,10 +20,12 @@ const Students = ({route, navigation}) => {
     const [courseName, setCourseName] = useState("")
     const [currentStudentId, setCurrentStudentId] = useState("")
     const [currentUserRole, setCurrentUserRole] = useState("")
+    const [selectedCourse, setSelectedCourse] = useState(''); // Set an initial value
     const [modalVisible, setModalVisible] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [courses, setCourses] = useState([])
+    const [coursesForFilter, setCoursesForFilter] = useState([])
     const [students, setStudents] = useState([])
     const [excelData, setExcelData] = useState([])
 
@@ -30,6 +34,7 @@ const Students = ({route, navigation}) => {
         getStudents()
         getExcelData()
         checkUser()
+        getCoursesForFilter()
     }, [])
 
     function checkUser() {
@@ -43,6 +48,13 @@ const Students = ({route, navigation}) => {
         fetch(baseUrl("student"))
             .then((resp) => resp.json())
             .then((json) => setStudents(json))
+            .catch((error) => console.error(error))
+    }
+
+    function getCoursesForFilter() {
+        fetch(baseUrl("course/filter"))
+            .then((resp) => resp.json())
+            .then((json) => setCoursesForFilter(json))
             .catch((error) => console.error(error))
     }
 
@@ -122,7 +134,6 @@ const Students = ({route, navigation}) => {
                         Accept: "application/json",
                         "Content-Type": "application/json",
                         "isAdmin": currentUserRole
-
                     },
                     body: JSON.stringify(studentData),
                 })
@@ -226,7 +237,11 @@ const Students = ({route, navigation}) => {
 
     const renderRow = ({item}) => (
         <TouchableOpacity
-            onPress={() => navigation.navigate("O'quvchi o'qiydigan kurs", {studentId: item.id, loginUserId})}>
+            onPress={() => navigation.navigate("O'quvchi o'qiydigan kurs", {
+                studentId: item.id,
+                loginUserId,
+                studentName: item.firstName + " " + item.lastName
+            })}>
             <View style={styles.row}>
                 <Text style={styles.cell}>{item.firstName}</Text>
                 <Text style={styles.cell}>{item.lastName}</Text>
@@ -247,6 +262,14 @@ const Students = ({route, navigation}) => {
         setAge(numericValue);
     }
 
+    function filterStudentsByCourse(id) {
+        fetch(baseUrl("student/"+id))
+            .then((resp) => resp.json())
+            .then((json) => setStudents(json))
+            .catch((error) => console.error(error))
+        setSelectedCourse(id)
+    }
+
     return (
         <View style={styles.container}>
             <SearchBar
@@ -262,6 +285,20 @@ const Students = ({route, navigation}) => {
                 <Button title={"excel faylga o'girish"} color={"warning"} onPress={() => downloadExcel()}/>
             </SafeAreaView>
             <Button title={"O'quvchi qo'shish"} onPress={() => setModalVisible(true)}/>
+            <SelectDropdown
+                defaultButtonText={""}
+                buttonStyle={{width: "100%"}}
+                data={coursesForFilter}
+                onSelect={(selectedItem, index) => {
+                    filterStudentsByCourse(selectedItem.id)
+                }}
+                buttonTextAfterSelection={(selectedItem, index) => {
+                    return selectedItem.name
+                }}
+                rowTextForSelection={(item, index) => {
+                    return item.name
+                }}
+            />
             <View style={styles.headerRow}>
                 <Text style={styles.headerCell}>O'quvchi Ismi</Text>
                 <Text style={styles.headerCell}>O'quvchi Familiyasi</Text>
