@@ -6,6 +6,7 @@ import com.example.backend.Entity.Course;
 import com.example.backend.Entity.Role;
 import com.example.backend.Entity.StudentCourse;
 import com.example.backend.Entity.User;
+import com.example.backend.Projection.CourseProjection;
 import com.example.backend.Repository.CourseRepository;
 import com.example.backend.Repository.StudentCourseRepository;
 import com.example.backend.Repository.UsersRepository;
@@ -78,6 +79,11 @@ public class CourseServiceImpl implements CourseService {
             courses.add(courseDTO);
         }
         return courses;
+    }
+
+    @Override
+    public List<CourseProjection> getCoursesForFilter() {
+        return courseRepository.getCoursesForSelectBox();
     }
 
     @Override

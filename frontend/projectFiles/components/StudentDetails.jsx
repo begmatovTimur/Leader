@@ -5,7 +5,7 @@ import baseUrl from "../baseUrl/baseUrl";
 
 
 export default function StudentDetailsPage({route,navigation}) {
-    const {studentId, courseId, loginUserId } = route.params
+    const {studentId, courseId, loginUserId, studentName } = route.params
     const [studentCourse, setStudentCourse] = useState([])
     const [currentMonthId, setCurrentMonthId] = useState("")
     const [currentUserRole, setCurrentUserRole] = useState("")
@@ -110,6 +110,7 @@ export default function StudentDetailsPage({route,navigation}) {
     return (
         <ScrollView>
             <View style={{overflowY: "auto"}}>
+                <Text style={styles.title}>siz {studentName} uchun to'lov qilyapsiz!</Text>
                 {
                     studentCourse.map(item => <Card containerStyle={{paddingBottom: 100}} wrapperStyle={{}}>
                         <Card.Title>{item.monthName}</Card.Title>
@@ -165,6 +166,12 @@ export default function StudentDetailsPage({route,navigation}) {
 }
 
 const styles = StyleSheet.create({
+    title:{
+      textAlign:"center",
+        fontSize:24,
+        fontWeight:"bold",
+        color:"red"
+    },
     activeText: {
         textAlign: "center"
     },
