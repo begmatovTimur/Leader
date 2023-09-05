@@ -70,4 +70,14 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
             group by s.id, s.age, s.first_name, s.last_name
             """, nativeQuery = true)
     List<Student> getStudentsByGroup(UUID id);
+
+    @Query(value = """
+  SELECT s.id, s.age, s.first_name, s.last_name
+    FROM student s
+            INNER JOIN student_course sc ON s.id = sc.student_id
+            INNER JOIN month m ON m.id = sc.month_id
+    WHERE sc.payment_amount = 0 AND m.id=:monthId
+    GROUP BY s.id, s.age, s.first_name, s.last_name, sc.payment_amount, m.name                           
+""", nativeQuery = true)
+    List<Student> getStudentByDebt(Integer monthId);
 }

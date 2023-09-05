@@ -3,6 +3,7 @@ package com.example.backend.Controller;
 import com.example.backend.DTO.StudentDTO;
 import com.example.backend.Services.StudentService.StudentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.tomcat.util.json.JSONParser;
@@ -52,6 +53,12 @@ public class StudentController {
     @GetMapping("/{id}")
     public String getStudentByGroup(@PathVariable String id){
         return new ObjectMapper().writeValueAsString(studentService.getStudentsByGroup(UUID.fromString(id)));
+    }
+
+    @SneakyThrows
+    @GetMapping("/debts/{monthId}")
+    public String getStudentByDebt(@PathVariable String monthId){
+        return new ObjectMapper().writeValueAsString(studentService.getStudentsByDebt(Integer.parseInt(monthId)));
     }
 
     @SneakyThrows

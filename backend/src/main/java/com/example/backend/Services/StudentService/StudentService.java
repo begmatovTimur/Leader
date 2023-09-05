@@ -24,4 +24,5 @@ public interface StudentService {
     List<Student> filterStudents(String filterText);
     List<Student> getStudents();
     List<Student> getStudentsByGroup(UUID id);
+    List<Student> getStudentsByDebt(Integer monthId);
 }

@@ -85,6 +85,11 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public List<Student> getStudentsByDebt(Integer monthId) {
+        return studentRepository.getStudentByDebt(monthId);
+    }
+
+    @Override
     public List<CourseProjection> getStudentCourses(UUID studentId) {
         return studentRepository.getStudentCourses(studentId);
     }
