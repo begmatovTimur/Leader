@@ -27,6 +27,8 @@ const Students = ({route, navigation}) => {
     const [coursesForFilter, setCoursesForFilter] = useState([])
     const [monthsForFilter, setMonthsForFilter] = useState([])
     const [students, setStudents] = useState([])
+    const [selectedMonth, setSelectedMonth] = useState("")
+    const [selectedGroup, setSelectedGroup] = useState("")
     const [excelData, setExcelData] = useState([])
 
     useEffect(() => {
@@ -46,6 +48,8 @@ const Students = ({route, navigation}) => {
     }
 
     function getStudents() {
+        setSelectedMonth("Select Month")
+        setSelectedGroup("Select Group")
         fetch(baseUrl("student"))
             .then((resp) => resp.json())
             .then((json) => setStudents(json))
@@ -306,10 +310,11 @@ const Students = ({route, navigation}) => {
                     buttonStyle={{width: "50%", backgroundColor: 'rgb(89,220,23)'}}
                     data={coursesForFilter}
                     onSelect={(selectedItem, index) => {
+                        setSelectedGroup(selectedItem.name)
                         filterStudentsByCourse(selectedItem.id)
                     }}
                     buttonTextAfterSelection={(selectedItem, index) => {
-                        return selectedItem.name
+                        return selectedGroup
                     }}
                     rowTextForSelection={(item, index) => {
                         return item.name
@@ -320,10 +325,11 @@ const Students = ({route, navigation}) => {
                     buttonStyle={{width: "50%", backgroundColor: 'rgb(220,193,23)'}}
                     data={monthsForFilter}
                     onSelect={(selectedItem, index) => {
+                        setSelectedMonth(selectedItem.name)
                         filterStudentsByDebt(selectedItem.id)
                     }}
                     buttonTextAfterSelection={(selectedItem, index) => {
-                        return selectedItem.name
+                        return selectedMonth
                     }}
                     rowTextForSelection={(item, index) => {
                         return item.name
