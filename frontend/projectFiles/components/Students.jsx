@@ -20,12 +20,12 @@ const Students = ({route, navigation}) => {
     const [courseName, setCourseName] = useState("")
     const [currentStudentId, setCurrentStudentId] = useState("")
     const [currentUserRole, setCurrentUserRole] = useState("")
-    const [selectedCourse, setSelectedCourse] = useState(''); // Set an initial value
     const [modalVisible, setModalVisible] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [courses, setCourses] = useState([])
     const [coursesForFilter, setCoursesForFilter] = useState([])
+    const [monthsForFilter, setMonthsForFilter] = useState([])
     const [students, setStudents] = useState([])
     const [excelData, setExcelData] = useState([])
 
@@ -35,6 +35,7 @@ const Students = ({route, navigation}) => {
         getExcelData()
         checkUser()
         getCoursesForFilter()
+        getMonthsForFilter()
     }, [])
 
     function checkUser() {
@@ -55,6 +56,13 @@ const Students = ({route, navigation}) => {
         fetch(baseUrl("course/filter"))
             .then((resp) => resp.json())
             .then((json) => setCoursesForFilter(json))
+            .catch((error) => console.error(error))
+    }
+
+    function getMonthsForFilter() {
+        fetch(baseUrl("month"))
+            .then((resp) => resp.json())
+            .then((json) => setMonthsForFilter(json))
             .catch((error) => console.error(error))
     }
 
@@ -235,6 +243,25 @@ const Students = ({route, navigation}) => {
         setIsEdit(true)
     }
 
+    function changeAge(text) {
+        const numericValue = text.replace(/[^0-9]/g, '');
+        setAge(numericValue);
+    }
+
+    function filterStudentsByCourse(id) {
+        fetch(baseUrl("student/" + id))
+            .then((resp) => resp.json())
+            .then((json) => setStudents(json))
+            .catch((error) => console.error(error))
+    }
+
+    function filterStudentsByDebt(monthId) {
+        fetch(baseUrl("student/debts/" + monthId))
+            .then((resp) => resp.json())
+            .then((json) => setStudents(json))
+            .catch((error) => console.error(error))
+    }
+
     const renderRow = ({item}) => (
         <TouchableOpacity
             onPress={() => navigation.navigate("O'quvchi o'qiydigan kurs", {
@@ -256,20 +283,6 @@ const Students = ({route, navigation}) => {
         </TouchableOpacity>
     );
 
-
-    function changeAge(text) {
-        const numericValue = text.replace(/[^0-9]/g, '');
-        setAge(numericValue);
-    }
-
-    function filterStudentsByCourse(id) {
-        fetch(baseUrl("student/"+id))
-            .then((resp) => resp.json())
-            .then((json) => setStudents(json))
-            .catch((error) => console.error(error))
-        setSelectedCourse(id)
-    }
-
     return (
         <View style={styles.container}>
             <SearchBar
@@ -278,27 +291,45 @@ const Students = ({route, navigation}) => {
                 round={true}
                 searchIcon={{size: 24}}
                 placeholder={"ism/familiya bo'yicha qidirish..."}
-
             />
 
             <SafeAreaView>
                 <Button title={"excel faylga o'girish"} color={"warning"} onPress={() => downloadExcel()}/>
             </SafeAreaView>
             <Button title={"O'quvchi qo'shish"} onPress={() => setModalVisible(true)}/>
-            <SelectDropdown
-                defaultButtonText={""}
-                buttonStyle={{width: "100%"}}
-                data={coursesForFilter}
-                onSelect={(selectedItem, index) => {
-                    filterStudentsByCourse(selectedItem.id)
-                }}
-                buttonTextAfterSelection={(selectedItem, index) => {
-                    return selectedItem.name
-                }}
-                rowTextForSelection={(item, index) => {
-                    return item.name
-                }}
+            <Button title={"Filterlarni Bekor qilish"} onPress={() => getStudents()}
+                    buttonStyle={{backgroundColor: 'rgb(196,63,63)'}}
             />
+            <View style={styles.selectFlex}>
+                <SelectDropdown
+                    defaultButtonText={"Select Group"}
+                    buttonStyle={{width: "50%", backgroundColor: 'rgb(89,220,23)'}}
+                    data={coursesForFilter}
+                    onSelect={(selectedItem, index) => {
+                        filterStudentsByCourse(selectedItem.id)
+                    }}
+                    buttonTextAfterSelection={(selectedItem, index) => {
+                        return selectedItem.name
+                    }}
+                    rowTextForSelection={(item, index) => {
+                        return item.name
+                    }}
+                />
+                <SelectDropdown
+                    defaultButtonText={"Select Month"}
+                    buttonStyle={{width: "50%", backgroundColor: 'rgb(220,193,23)'}}
+                    data={monthsForFilter}
+                    onSelect={(selectedItem, index) => {
+                        filterStudentsByDebt(selectedItem.id)
+                    }}
+                    buttonTextAfterSelection={(selectedItem, index) => {
+                        return selectedItem.name
+                    }}
+                    rowTextForSelection={(item, index) => {
+                        return item.name
+                    }}
+                />
+            </View>
             <View style={styles.headerRow}>
                 <Text style={styles.headerCell}>O'quvchi Ismi</Text>
                 <Text style={styles.headerCell}>O'quvchi Familiyasi</Text>
@@ -405,6 +436,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        color: 'rgb(220,193,23)',
     },
     modalContent: {
         width: 400,
@@ -439,6 +471,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 20
     },
+    selectFlex: {
+        flexDirection: 'row'
+    }
 });
 
 export default Students;
