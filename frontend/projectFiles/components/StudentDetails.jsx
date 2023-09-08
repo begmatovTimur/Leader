@@ -120,8 +120,7 @@ export default function StudentDetailsPage({route, navigation}) {
                 <Text style={styles.title}>{studentName}</Text>
                 <Text style={styles.description}>{registerDate}</Text>
                 {
-                    studentCourse.map(item => <Card containerStyle={styles.cardContainer} wrapperStyle={{}}>
-
+                    studentCourse.map(item => <Card containerStyle={styles.cardContainer}>
                         <Card.Title style={styles.monthName}>{item.monthName}</Card.Title>
                         <Card.Divider/>
                         <Text style={styles.activeText}>O'quvchining holati</Text>
@@ -132,18 +131,18 @@ export default function StudentDetailsPage({route, navigation}) {
                             }}
                         >
                             <CheckBox
-                                checked={item.paymentAmount > 0}
+                                checked={item.paymentAmount > 0 || item.active}
                                 onPress={() => changeActiveStudent(item.active, item.id)}
                             />
 
                             <Text style={styles.payAmount}>To'lov Qiymati: {item.paymentAmount}</Text>
                             <Text style={styles.payDate}>To'lov Sanasi: {item.payedAt}</Text>
-                            <Button onPress={() => viewModal(item.id)} buttonStyle={styles.payButton}>Oy uchun to'lov
-                                qilish</Button>
+                            <Button onPress={() => viewModal(item.id)} buttonStyle={styles.payButton}>
+                                Oy uchun to'lov qilish
+                            </Button>
                         </View>
                     </Card>)
                 }
-
 
                 <Modal
                     visible={modalVisible}
@@ -212,7 +211,7 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         width: 400,
-        height: 150,
+        height: 250,
         backgroundColor: 'white',
         padding: 20,
         borderRadius: 8,
