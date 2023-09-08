@@ -52,7 +52,10 @@ const Students = ({route, navigation}) => {
         setSelectedGroup("Select Group")
         fetch(baseUrl("student"))
             .then((resp) => resp.json())
-            .then((json) => setStudents(json))
+            .then((json) => {
+                setStudents(json)
+                getExcelData()
+            })
             .catch((error) => console.error(error))
     }
 
@@ -208,6 +211,23 @@ const Students = ({route, navigation}) => {
         const ws = XLSX.utils.json_to_sheet(excelData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        // Calculate and set column widths based on content width.
+        const columnWidths = {};
+        XLSX.utils.sheet_to_json(ws, { header: 1 }).forEach((row) => {
+            row.forEach((value, columnIndex) => {
+                const cellWidth = value ? value.toString().length + 2 : 10; // Adjust the default width as needed.
+                if (!columnWidths[columnIndex] || cellWidth > columnWidths[columnIndex]) {
+                    columnWidths[columnIndex] = cellWidth;
+                }
+            });
+        });
+
+        // Convert column widths to XLSX format.
+        const cols = Object.keys(columnWidths).map((key) => ({
+            wch: columnWidths[key],
+        }));
+
+        ws['!cols'] = cols;
         const excelFileBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'base64'});
 
         const fileUri = `${FileSystem.cacheDirectory}studentlar ma'lumoti.xlsx`;
@@ -255,14 +275,20 @@ const Students = ({route, navigation}) => {
     function filterStudentsByCourse(id) {
         fetch(baseUrl("student/" + id))
             .then((resp) => resp.json())
-            .then((json) => setStudents(json))
+            .then((json) => {
+                setStudents(json)
+                getExcelData()
+            })
             .catch((error) => console.error(error))
     }
 
     function filterStudentsByDebt(monthId) {
         fetch(baseUrl("student/debts/" + monthId))
             .then((resp) => resp.json())
-            .then((json) => setStudents(json))
+            .then((json) => {
+                setStudents(json)
+                getExcelData()
+            })
             .catch((error) => console.error(error))
     }
 
@@ -271,7 +297,8 @@ const Students = ({route, navigation}) => {
             onPress={() => navigation.navigate("O'quvchi o'qiydigan kurs", {
                 studentId: item.id,
                 loginUserId,
-                studentName: item.firstName + " " + item.lastName
+                studentName: item.firstName + " " + item.lastName,
+                registerDate:item.registerDate
             })}>
             <View style={styles.row}>
                 <Text style={styles.cell}>{item.firstName}</Text>
@@ -301,7 +328,10 @@ const Students = ({route, navigation}) => {
                 <Button title={"excel faylga o'girish"} color={"warning"} onPress={() => downloadExcel()}/>
             </SafeAreaView>
             <Button title={"O'quvchi qo'shish"} onPress={() => setModalVisible(true)}/>
-            <Button title={"Filterlarni Bekor qilish"} onPress={() => getStudents()}
+            <Button title={"Filterlarni Bekor qilish"} onPress={() => {
+                getStudents()
+
+            }}
                     buttonStyle={{backgroundColor: 'rgb(196,63,63)'}}
             />
             <View style={styles.selectFlex}>
@@ -312,6 +342,7 @@ const Students = ({route, navigation}) => {
                     onSelect={(selectedItem, index) => {
                         setSelectedGroup(selectedItem.name)
                         filterStudentsByCourse(selectedItem.id)
+
                     }}
                     buttonTextAfterSelection={(selectedItem, index) => {
                         return selectedGroup
@@ -327,6 +358,7 @@ const Students = ({route, navigation}) => {
                     onSelect={(selectedItem, index) => {
                         setSelectedMonth(selectedItem.name)
                         filterStudentsByDebt(selectedItem.id)
+
                     }}
                     buttonTextAfterSelection={(selectedItem, index) => {
                         return selectedMonth

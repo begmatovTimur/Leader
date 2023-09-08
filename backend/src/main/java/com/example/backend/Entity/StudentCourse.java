@@ -28,6 +28,7 @@ public class StudentCourse {
     private User user;
     private Boolean active;
     private Integer paymentAmount;
+    private Integer paymentIndex;
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp payedAt;

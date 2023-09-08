@@ -44,7 +44,7 @@ public class CourseController {
     @SneakyThrows
     @PatchMapping("/coursePayment/{currentMonthId}")
     public String payForCourse(@PathVariable("currentMonthId") String currentMonthId, @RequestBody PaymentReq paymentReq, @RequestHeader("isAdmin") String roleName){
-        return new ObjectMapper().writeValueAsString(courseService.payForCourse(Integer.parseInt(currentMonthId), paymentReq.getPayAmount(), UUID.fromString(paymentReq.getAdminId()), roleName));
+        return new ObjectMapper().writeValueAsString(courseService.payForCourse(Integer.parseInt(currentMonthId), paymentReq.getPayAmount(), paymentReq.getPayIndex(), UUID.fromString(paymentReq.getAdminId()), roleName));
     }
 
     @SneakyThrows

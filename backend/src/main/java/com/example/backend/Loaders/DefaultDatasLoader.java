@@ -67,6 +67,10 @@ public class DefaultDatasLoader implements CommandLineRunner {
                             .build()
             );
 
+            monthRepository.save(generateMonthFromName(MonthEnum.SEPTEMBER.name()));
+            monthRepository.save(generateMonthFromName(MonthEnum.OCTOBER.name()));
+            monthRepository.save(generateMonthFromName(MonthEnum.NOVEMBER.name()));
+            monthRepository.save(generateMonthFromName(MonthEnum.DECEMBER.name()));
             monthRepository.save(generateMonthFromName(MonthEnum.JANUARY.name()));
             monthRepository.save(generateMonthFromName(MonthEnum.FEBRUARY.name()));
             monthRepository.save(generateMonthFromName(MonthEnum.MARCH.name()));
@@ -75,10 +79,6 @@ public class DefaultDatasLoader implements CommandLineRunner {
             monthRepository.save(generateMonthFromName(MonthEnum.JUNE.name()));
             monthRepository.save(generateMonthFromName(MonthEnum.JULY.name()));
             monthRepository.save(generateMonthFromName(MonthEnum.AUGUST.name()));
-            monthRepository.save(generateMonthFromName(MonthEnum.SEPTEMBER.name()));
-            monthRepository.save(generateMonthFromName(MonthEnum.OCTOBER.name()));
-            monthRepository.save(generateMonthFromName(MonthEnum.NOVEMBER.name()));
-            monthRepository.save(generateMonthFromName(MonthEnum.DECEMBER.name()));
         }
     }
 
