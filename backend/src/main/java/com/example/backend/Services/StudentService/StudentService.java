@@ -7,6 +7,7 @@ import com.example.backend.Projection.CourseProjection;
 import com.example.backend.Projection.StudentCourseProjection;
 import com.example.backend.Projection.StudentProjection;
 import jakarta.transaction.Transactional;
+import lombok.SneakyThrows;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -17,10 +18,13 @@ public interface StudentService {
     void addStudentCourse(Student savedStudent, Course studentCourse);
     void changeActiveStudent(Integer currentMonthId, Boolean active);
     String editStudent(UUID studentId, StudentDTO student, String roleName);
+
+    @SneakyThrows
+    List<StudentProjection> convertToExcelFile(String courseId,String monthId);
+
     String deleteStudent(UUID id, String roleName);
     List<StudentCourseProjection> getStudentTimeTable(UUID courseId, UUID studentId);
     List<CourseProjection> getStudentCourses(UUID studentId);
-    List<StudentProjection> convertToExcelFile();
     List<Student> filterStudents(String filterText);
     List<Student> getStudents();
     List<Student> getStudentsByGroup(UUID id);

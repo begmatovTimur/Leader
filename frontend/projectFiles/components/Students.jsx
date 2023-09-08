@@ -26,8 +26,8 @@ const Students = ({route, navigation}) => {
     const [coursesForFilter, setCoursesForFilter] = useState([])
     const [monthsForFilter, setMonthsForFilter] = useState([])
     const [students, setStudents] = useState([])
-    const [selectedMonth, setSelectedMonth] = useState("")
-    const [selectedGroup, setSelectedGroup] = useState("")
+    const [selectedMonth, setSelectedMonth] = useState({id:null})
+    const [selectedGroup, setSelectedGroup] = useState({id:null})
     const [excelData, setExcelData] = useState([])
 
     useEffect(() => {
@@ -47,8 +47,8 @@ const Students = ({route, navigation}) => {
     }
 
     function getStudents() {
-        setSelectedMonth("Select Month")
-        setSelectedGroup("Select Group")
+        setSelectedMonth({name:"Select Month", id:0})
+        setSelectedGroup({name:"Select Group", id: ""})
         fetch(baseUrl("student"))
             .then((resp) => resp.json())
             .then((json) => {
@@ -73,7 +73,7 @@ const Students = ({route, navigation}) => {
     }
 
     function getExcelData() {
-        fetch(baseUrl("student/convertExcel"))
+        fetch(baseUrl(`student/convertExcel?courseId=${selectedGroup.id}&monthId=${selectedMonth.id}`))
             .then((resp) => resp.json())
             .then((json) => {
                 const studentExcelData = []
@@ -272,6 +272,7 @@ const Students = ({route, navigation}) => {
     }
 
     function filterStudentsByCourse(id) {
+        console.log(id)
         fetch(baseUrl("student/" + id))
             .then((resp) => resp.json())
             .then((json) => {
@@ -339,12 +340,12 @@ const Students = ({route, navigation}) => {
                     buttonStyle={{width: "50%", backgroundColor: 'rgb(89,220,23)'}}
                     data={coursesForFilter}
                     onSelect={(selectedItem, index) => {
-                        setSelectedGroup(selectedItem.name)
+                        setSelectedGroup(selectedItem)
                         filterStudentsByCourse(selectedItem.id)
 
                     }}
                     buttonTextAfterSelection={(selectedItem, index) => {
-                        return selectedGroup
+                        return selectedGroup.name
                     }}
                     rowTextForSelection={(item, index) => {
                         return item.name
@@ -355,12 +356,12 @@ const Students = ({route, navigation}) => {
                     buttonStyle={{width: "50%", backgroundColor: 'rgb(220,193,23)'}}
                     data={monthsForFilter}
                     onSelect={(selectedItem, index) => {
-                        setSelectedMonth(selectedItem.name)
+                        setSelectedMonth(selectedItem)
                         filterStudentsByDebt(selectedItem.id)
 
                     }}
                     buttonTextAfterSelection={(selectedItem, index) => {
-                        return selectedMonth
+                        return selectedMonth.name
                     }}
                     rowTextForSelection={(item, index) => {
                         return item.name

@@ -45,19 +45,22 @@ public class StudentController {
 
     @SneakyThrows
     @GetMapping("/convertExcel")
-    public String convertDataToExcel(){
-        return new ObjectMapper().writeValueAsString(studentService.convertToExcelFile());
+    public String convertDataToExcel(@RequestParam("courseId") String courseId, @RequestParam("monthId") String monthId) {
+        System.out.println(courseId);
+        System.out.println(monthId);
+        return new ObjectMapper().writeValueAsString(studentService.convertToExcelFile(courseId, monthId));
     }
 
     @SneakyThrows
     @GetMapping("/{id}")
-    public String getStudentByGroup(@PathVariable String id){
+    public String getStudentByGroup(@PathVariable String id) {
         return new ObjectMapper().writeValueAsString(studentService.getStudentsByGroup(UUID.fromString(id)));
     }
 
     @SneakyThrows
     @GetMapping("/debts/{monthId}")
-    public String getStudentByDebt(@PathVariable String monthId){
+    public String getStudentByDebt(@PathVariable String monthId) {
+        System.out.println(monthId + " hello");
         return new ObjectMapper().writeValueAsString(studentService.getStudentsByDebt(Integer.parseInt(monthId)));
     }
 
@@ -70,7 +73,7 @@ public class StudentController {
 
     @SneakyThrows
     @PutMapping("/{studentId}")
-    public String editStudent(@PathVariable String studentId, @RequestBody StudentDTO student, @RequestHeader("isAdmin") String roleName){
+    public String editStudent(@PathVariable String studentId, @RequestBody StudentDTO student, @RequestHeader("isAdmin") String roleName) {
         return new ObjectMapper().writeValueAsString(studentService.editStudent(UUID.fromString(studentId), student, roleName));
     }
 

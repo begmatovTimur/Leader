@@ -113,9 +113,17 @@ public class StudentServiceImpl implements StudentService {
 
     @SneakyThrows
     @Override
-    public List<StudentProjection> convertToExcelFile() {
-        return studentRepository.convertToExcelFile();
+    public List<StudentProjection> convertToExcelFile(String courseId, String monthId) {
+        if (courseId.equals("undefined") && monthId.equals("undefined")){
+            return studentRepository.convertToExcelFileByNothing();
+        } else if ("undefined".equals(courseId)) {
+            return studentRepository.convertToExcelFileByMonth(Integer.valueOf(monthId));
+        } else if ("undefined".equals(monthId)) {
+            return studentRepository.convertToExcelFileByCourse(UUID.fromString(courseId));
+        }
+        return studentRepository.convertToExcelFileByNothing();
     }
+
 
     @Override
     @Transactional
