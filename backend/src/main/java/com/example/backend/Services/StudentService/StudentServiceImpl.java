@@ -90,6 +90,23 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public List<Student> getAllStudents(String courseId, String monthId) {
+        if (!monthId.isEmpty() && !courseId.isEmpty() && !courseId.equals("undefined") && !monthId.equals("0") && !monthId.equals("undefined")){
+            List<Student> studentProjections = studentRepository.getStudentsByAll(Integer.valueOf(monthId), UUID.fromString(courseId));
+            System.out.println(studentProjections);
+            return studentProjections;
+        } else if (courseId.isEmpty() && !monthId.equals("undefined") && !monthId.isEmpty()) {
+            System.out.println(monthId + " monthId");
+            List<Student> studentProjections = studentRepository.getStudentByDebt(Integer.valueOf(monthId));
+            System.out.println(studentProjections);
+            return studentProjections;
+        } else if (monthId.equals("0") && !courseId.isEmpty() && !courseId.equals("undefined")) {
+            return studentRepository.getStudentsByGroup(UUID.fromString(courseId));
+        }
+        return studentRepository.findAll();
+    }
+
+    @Override
     public List<CourseProjection> getStudentCourses(UUID studentId) {
         return studentRepository.getStudentCourses(studentId);
     }
@@ -114,10 +131,17 @@ public class StudentServiceImpl implements StudentService {
     @SneakyThrows
     @Override
     public List<StudentProjection> convertToExcelFile(String courseId, String monthId) {
-        if (courseId.equals("0") && monthId.equals("undefined") || courseId.equals("0") && monthId.equals("") ){
-            return studentRepository.convertToExcelFileByNothing();
-        } else if (courseId.equals("undefined")) {
-            return studentRepository.convertToExcelFileByMonth(Integer.valueOf(monthId));
+        System.out.println(courseId);
+        System.out.println(monthId);
+        if (!monthId.isEmpty() && !courseId.isEmpty() && !courseId.equals("undefined") && !monthId.equals("0") && !monthId.equals("undefined")){
+            List<StudentProjection> studentProjections = studentRepository.convertToExcelFileByAll(Integer.valueOf(monthId), UUID.fromString(courseId));
+            System.out.println(studentProjections);
+            return studentProjections;
+        } else if (courseId.isEmpty() && !monthId.equals("undefined") && !monthId.isEmpty()) {
+            System.out.println(monthId + " monthId");
+            List<StudentProjection> studentProjections = studentRepository.convertToExcelFileByMonth(Integer.valueOf(monthId));
+            System.out.println(studentProjections);
+            return studentProjections;
         } else if (monthId.equals("0") && !courseId.isEmpty() && !courseId.equals("undefined")) {
             return studentRepository.convertToExcelFileByCourse(UUID.fromString(courseId));
         }

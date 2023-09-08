@@ -47,24 +47,24 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
     List<Student> filterByFirstNameOrLastNameBySimilarity(String filterText);
 
     @Query(value = """
-            SELECT s.first_name,
-                                                            s.last_name,
-                                                            s.age,
-                                                            json_agg(
-                                                                    json_build_object(
-                                                                            'month', m.name,
-                                                                            'amount', CONCAT(sc.payment_amount, ' - ', sc.payment_index)
-                                                                        ) ORDER BY m.id
-                                                                ) AS payments
-                                                     FROM student s
-                                                              INNER JOIN student_course sc ON s.id = sc.student_id
-                                                              INNER JOIN month m ON m.id = sc.month_id
-                                                     WHERE sc.payment_amount = 0 AND m.id<=:monthId
-                                                     GROUP BY
-                                                         s.first_name, s.last_name, s.age
-                                                     ORDER BY
-                                                         s.first_name, s.last_name, s.age                    
-                   """, nativeQuery = true)
+       SELECT s.first_name,
+              s.last_name,
+              s.age,
+              json_agg(
+                      json_build_object(
+                              'month', m.name,
+                              'amount', CONCAT(sc.payment_amount, ' - ', sc.payment_index)
+                          ) ORDER BY m.id
+                  ) AS payments
+       FROM student s
+                INNER JOIN student_course sc ON s.id = sc.student_id
+                INNER JOIN month m ON m.id = sc.month_id
+       WHERE sc.payment_amount = 0 AND m.id<=:monthId
+       GROUP BY
+           s.first_name, s.last_name, s.age
+       ORDER BY
+           s.first_name, s.last_name, s.age
+""", nativeQuery = true)
     List<StudentProjection> convertToExcelFileByMonth(Integer monthId);
     @Query(value = """
             SELECT s.first_name,
@@ -125,4 +125,34 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
     GROUP BY s.id, s.age, s.first_name, s.last_name, sc.student_id, s.register_date                                                                            
 """, nativeQuery = true)
     List<Student> getStudentByDebt(Integer monthId);
+    @Query(value = """
+       SELECT s.first_name,
+              s.last_name,
+              s.age,
+              json_agg(
+                      json_build_object(
+                              'month', m.name,
+                              'amount', CONCAT(sc.payment_amount, ' - ', sc.payment_index)
+                          ) ORDER BY m.id
+                  ) AS payments
+       FROM student s
+                INNER JOIN student_course sc ON s.id = sc.student_id
+                INNER JOIN month m ON m.id = sc.month_id
+       WHERE sc.payment_amount = 0 AND m.id<=:monthId AND (sc.course_id = :courseId)
+       GROUP BY
+           s.first_name, s.last_name, s.age
+       ORDER BY
+           s.first_name, s.last_name, s.age
+""", nativeQuery = true)
+    List<StudentProjection> convertToExcelFileByAll(Integer monthId,UUID courseId);
+
+    @Query(value = """
+  SELECT s.id, s.age, s.first_name, s.last_name, s.register_date
+    FROM student s
+    INNER JOIN student_course sc ON s.id = sc.student_id
+    INNER JOIN month m ON m.id = sc.month_id
+    WHERE sc.payment_amount = 0 AND m.id<=:monthId AND (sc.course_id = :courseId)
+    GROUP BY s.id, s.age, s.first_name, s.last_name, sc.student_id, s.register_date                                                                            
+""", nativeQuery = true)
+    List<Student> getStudentsByAll(Integer monthId, UUID courseId);
 }

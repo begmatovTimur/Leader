@@ -6,9 +6,7 @@ import com.example.backend.Entity.Student;
 import com.example.backend.Projection.CourseProjection;
 import com.example.backend.Projection.StudentCourseProjection;
 import com.example.backend.Projection.StudentProjection;
-import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,4 +27,6 @@ public interface StudentService {
     List<Student> getStudents();
     List<Student> getStudentsByGroup(UUID id);
     List<Student> getStudentsByDebt(Integer monthId);
+
+    List<Student> getAllStudents(String courseId, String monthId);
 }

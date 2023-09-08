@@ -62,6 +62,13 @@ public class StudentController {
     }
 
     @SneakyThrows
+    @GetMapping("/all")
+    public String getAllStudent(@RequestParam("courseId") String courseId, @RequestParam("monthId") String monthId) {
+        System.out.println(courseId + " " + monthId);
+        return new ObjectMapper().writeValueAsString(studentService.getAllStudents(courseId, monthId));
+    }
+
+    @SneakyThrows
     @PostMapping
     public String addStudent(@RequestBody StudentDTO studentDTO) {
         studentService.addStudent(studentDTO);

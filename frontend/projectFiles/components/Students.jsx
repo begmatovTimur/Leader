@@ -47,8 +47,8 @@ const Students = ({route, navigation}) => {
     }
 
     function getStudents() {
-        setSelectedMonth({name:"Select Month", id:0})
-        setSelectedGroup({name:"Select Group", id: ""})
+        setSelectedMonth({name:"Oy Tanlash", id:0})
+        setSelectedGroup({name:"Gurux Tanlash", id: ""})
         fetch(baseUrl("student"))
             .then((resp) => resp.json())
             .then((json) => {
@@ -72,8 +72,9 @@ const Students = ({route, navigation}) => {
             .catch((error) => console.error(error))
     }
 
-    function getExcelData() {
-        fetch(baseUrl(`student/convertExcel?courseId=${selectedGroup.id}&monthId=${selectedMonth.id}`))
+    function getExcelData(monthId) {
+        console.log(monthId)
+        fetch(baseUrl(`student/convertExcel?courseId=${selectedGroup.id}&monthId=${monthId}`))
             .then((resp) => resp.json())
             .then((json) => {
                 const studentExcelData = []
@@ -271,26 +272,36 @@ const Students = ({route, navigation}) => {
         setAge(numericValue);
     }
 
-    function filterStudentsByCourse(id) {
-        console.log(id)
-        fetch(baseUrl("student/" + id))
+    // function filterStudentsByCourse(id) {
+    //     console.log(id)
+    //     fetch(baseUrl("student/" + id))
+    //         .then((resp) => resp.json())
+    //         .then((json) => {
+    //             setStudents(json)
+    //             getExcelData(selectedMonth.id)
+    //         })
+    //         .catch((error) => console.error(error))
+    // }
+    function filterStudentByAll(monthId, courseId){
+        console.log("Hello")
+        fetch(baseUrl(`student/all?courseId=${courseId}&monthId=${monthId}`))
             .then((resp) => resp.json())
             .then((json) => {
                 setStudents(json)
-                getExcelData()
+                getExcelData(monthId)
             })
             .catch((error) => console.error(error))
     }
-
-    function filterStudentsByDebt(monthId) {
-        fetch(baseUrl("student/debts/" + monthId))
-            .then((resp) => resp.json())
-            .then((json) => {
-                setStudents(json)
-                getExcelData()
-            })
-            .catch((error) => console.error(error))
-    }
+    // function filterStudentsByDebt(monthId) {
+    //     fetch(baseUrl("student/debts/" + monthId))
+    //         .then((resp) => resp.json())
+    //         .then((json) => {
+    //             setStudents(json)
+    //             console.log(monthId)
+    //             getExcelData(monthId)
+    //         })
+    //         .catch((error) => console.error(error))
+    // }
 
     const renderRow = ({item}) => (
         <TouchableOpacity
@@ -336,12 +347,12 @@ const Students = ({route, navigation}) => {
             />
             <View style={styles.selectFlex}>
                 <SelectDropdown
-                    defaultButtonText={"Select Group"}
+                    defaultButtonText={"Gurux Tanlash"}
                     buttonStyle={{width: "50%", backgroundColor: 'rgb(89,220,23)'}}
                     data={coursesForFilter}
                     onSelect={(selectedItem, index) => {
                         setSelectedGroup(selectedItem)
-                        filterStudentsByCourse(selectedItem.id)
+                        filterStudentByAll(selectedMonth.id,selectedItem.id)
 
                     }}
                     buttonTextAfterSelection={(selectedItem, index) => {
@@ -352,12 +363,12 @@ const Students = ({route, navigation}) => {
                     }}
                 />
                 <SelectDropdown
-                    defaultButtonText={"Select Month"}
+                    defaultButtonText={"Oy Tanlash"}
                     buttonStyle={{width: "50%", backgroundColor: 'rgb(220,193,23)'}}
                     data={monthsForFilter}
                     onSelect={(selectedItem, index) => {
                         setSelectedMonth(selectedItem)
-                        filterStudentsByDebt(selectedItem.id)
+                        filterStudentByAll(selectedItem.id, selectedGroup.id)
 
                     }}
                     buttonTextAfterSelection={(selectedItem, index) => {

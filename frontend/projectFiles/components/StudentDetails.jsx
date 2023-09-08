@@ -66,6 +66,7 @@ export default function StudentDetailsPage({route, navigation}) {
                     reset()
                 } else if (responseData === "error") {
                     alert("to'lovda xatolik");
+                    setPayIndex(null)
                 }
             })
             .catch((e) => {

@@ -67,10 +67,12 @@ const Login = ({navigation}) => {
                         <View style={styles.passwordInputContainer}>
                             <TextInput
                                 style={styles.passwordInput}
+
                                 placeholder="Password"
                                 value={password}
                                 onChangeText={(text) => setPassword(text)}
                                 secureTextEntry={!showPassword}
+                                autoCapitalize="none"
                             />
                             <TouchableOpacity style={styles.eyeIconContainer} onPress={toggleShowPassword}>
                                 <FontAwesome name={showPassword ? 'eye' : 'eye-slash'} size={20} color="#333"/>
