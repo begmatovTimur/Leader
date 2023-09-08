@@ -116,9 +116,9 @@ public class StudentServiceImpl implements StudentService {
     public List<StudentProjection> convertToExcelFile(String courseId, String monthId) {
         if (courseId.equals("undefined") && monthId.equals("undefined")){
             return studentRepository.convertToExcelFileByNothing();
-        } else if ("undefined".equals(courseId)) {
+        } else if (courseId.equals("undefined")) {
             return studentRepository.convertToExcelFileByMonth(Integer.valueOf(monthId));
-        } else if ("undefined".equals(monthId)) {
+        } else if (monthId.equals("0")) {
             return studentRepository.convertToExcelFileByCourse(UUID.fromString(courseId));
         }
         return studentRepository.convertToExcelFileByNothing();
