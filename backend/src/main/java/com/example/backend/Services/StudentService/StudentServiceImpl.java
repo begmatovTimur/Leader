@@ -150,7 +150,7 @@ public class StudentServiceImpl implements StudentService {
                         studentCourse,
                         monthEntity,
                         null,
-                        true,
+                        false,
                         0,
                         null,
                         Timestamp.from(Instant.now()),

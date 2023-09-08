@@ -8,7 +8,6 @@ import {blue600} from "react-native-paper/src/styles/themes/v2/colors";
 import * as XLSX from 'xlsx';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import {Picker} from "react-native-web";
 
 
 const Students = ({route, navigation}) => {
