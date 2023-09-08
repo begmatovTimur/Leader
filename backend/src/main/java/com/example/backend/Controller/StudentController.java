@@ -46,8 +46,6 @@ public class StudentController {
     @SneakyThrows
     @GetMapping("/convertExcel")
     public String convertDataToExcel(@RequestParam("courseId") String courseId, @RequestParam("monthId") String monthId) {
-        System.out.println(courseId);
-        System.out.println(monthId);
         return new ObjectMapper().writeValueAsString(studentService.convertToExcelFile(courseId, monthId));
     }
 
@@ -60,7 +58,6 @@ public class StudentController {
     @SneakyThrows
     @GetMapping("/debts/{monthId}")
     public String getStudentByDebt(@PathVariable String monthId) {
-        System.out.println(monthId + " hello");
         return new ObjectMapper().writeValueAsString(studentService.getStudentsByDebt(Integer.parseInt(monthId)));
     }
 
