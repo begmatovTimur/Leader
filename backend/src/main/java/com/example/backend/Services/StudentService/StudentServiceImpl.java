@@ -38,7 +38,7 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public String editStudent(UUID studentId, StudentDTO student, String roleName) {
         Role userRole = roleRepository.findByRoleName(roleName);
-        if (userRole.getRoleName().equals("ROLE_OWNER")){
+        if (userRole.getRoleName().equals("ROLE_OWNER")) {
             Student newStudent = generateStudentFromData(student);
             newStudent.setId(studentId);
             List<StudentCourse> allByStudentId = studentCourseRepository.findAllByStudentId(studentId);
@@ -132,11 +132,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     private static Student generateStudentFromData(StudentDTO studentData) {
+        LocalDate now = LocalDate.now();
         return new Student(
                 null,
                 studentData.getFirstName(),
                 studentData.getLastName(),
-                studentData.getAge()
+                studentData.getAge(),
+                now.getDayOfMonth() + " - " + now.getMonth().name() + ", " + now.getYear() + " - yil"
         );
     }
 
@@ -150,6 +152,7 @@ public class StudentServiceImpl implements StudentService {
                         null,
                         true,
                         0,
+                        null,
                         Timestamp.from(Instant.now()),
                         Timestamp.from(Instant.now()),
                         null

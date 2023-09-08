@@ -4,12 +4,13 @@ import {Button, Card, CheckBox, Input} from "@rneui/base";
 import baseUrl from "../baseUrl/baseUrl";
 
 
-export default function StudentDetailsPage({route,navigation}) {
-    const {studentId, courseId, loginUserId, studentName } = route.params
+export default function StudentDetailsPage({route, navigation}) {
+    const {studentId, registerDate, courseId, loginUserId, studentName} = route.params
     const [studentCourse, setStudentCourse] = useState([])
     const [currentMonthId, setCurrentMonthId] = useState("")
     const [currentUserRole, setCurrentUserRole] = useState("")
     const [payAmount, setPayAmount] = useState(0)
+    const [payIndex, setPayIndex] = useState(0)
     const [modalVisible, setModalVisible] = useState(false)
 
     useEffect(() => {
@@ -17,7 +18,7 @@ export default function StudentDetailsPage({route,navigation}) {
         checkUser()
     }, [])
 
-    function checkUser(){
+    function checkUser() {
         fetch(baseUrl(`users/checkUser/${loginUserId}`))
             .then((resp) => resp.json())
             .then((json) => setCurrentUserRole(json))
@@ -47,22 +48,23 @@ export default function StudentDetailsPage({route,navigation}) {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-                "isAdmin":currentUserRole
+                "isAdmin": currentUserRole
             },
             body: JSON.stringify(
                 {
                     payAmount,
-                    adminId:loginUserId
+                    payIndex,
+                    adminId: loginUserId
                 }
             ),
         })
             .then((response) => response.json())
             .then((responseData) => {
-                if (responseData==="success") {
+                if (responseData === "success") {
                     setModalVisible(false)
                     getStudentCourse()
                     reset()
-                } else if (responseData==="error"){
+                } else if (responseData === "error") {
                     alert("to'lovda xatolik");
                 }
             })
@@ -98,7 +100,7 @@ export default function StudentDetailsPage({route,navigation}) {
             });
     }
 
-    function reset(){
+    function reset() {
         setPayAmount(0)
     }
 
@@ -107,13 +109,20 @@ export default function StudentDetailsPage({route,navigation}) {
         setPayAmount(numericValue)
     }
 
+    function changePaymentIndex(text) {
+        const numericValue = text.replace(/[^0-9]/g, '');
+        setPayIndex(numericValue)
+    }
+
     return (
         <ScrollView>
             <View style={{overflowY: "auto"}}>
-                <Text style={styles.title}>siz {studentName} uchun to'lov qilyapsiz!</Text>
+                <Text style={styles.title}>{studentName}</Text>
+                <Text style={styles.description}>{registerDate}</Text>
                 {
-                    studentCourse.map(item => <Card containerStyle={{paddingBottom: 100}} wrapperStyle={{}}>
-                        <Card.Title>{item.monthName}</Card.Title>
+                    studentCourse.map(item => <Card containerStyle={styles.cardContainer} wrapperStyle={{}}>
+
+                        <Card.Title style={styles.monthName}>{item.monthName}</Card.Title>
                         <Card.Divider/>
                         <Text style={styles.activeText}>O'quvchining holati</Text>
                         <View
@@ -123,13 +132,14 @@ export default function StudentDetailsPage({route,navigation}) {
                             }}
                         >
                             <CheckBox
-                                checked={item.paymentAmount>0}
-                                onPress={()=>changeActiveStudent(item.active, item.id)}
+                                checked={item.paymentAmount > 0}
+                                onPress={() => changeActiveStudent(item.active, item.id)}
                             />
 
-                            <Text>To'lov Qiymati: {item.paymentAmount}</Text>
-                            <Text>To'lov Sanasi: {item.payedAt}</Text>
-                            <Button onPress={() => viewModal(item.id)}>Oy uchun to'lov qilish</Button>
+                            <Text style={styles.payAmount}>To'lov Qiymati: {item.paymentAmount}</Text>
+                            <Text style={styles.payDate}>To'lov Sanasi: {item.payedAt}</Text>
+                            <Button onPress={() => viewModal(item.id)} buttonStyle={styles.payButton}>Oy uchun to'lov
+                                qilish</Button>
                         </View>
                     </Card>)
                 }
@@ -143,9 +153,12 @@ export default function StudentDetailsPage({route,navigation}) {
                 >
                     <View style={styles.modalContainer}>
                         <View style={styles.modalContent}>
-                            <Input placeholder={"To'lovni miqdorini kiriting"} keyboardType={"default"}
+                            <Input placeholder={"To'lov miqdorini kiriting"} keyboardType={"default"}
                                    value={payAmount}
                                    onChangeText={(text) => changePaymentAmount(text)}/>
+                            <Input placeholder={"To'lov indeksini kiriting"} keyboardType={"default"}
+                                   value={payIndex}
+                                   onChangeText={(text) => changePaymentIndex(text)}/>
 
                             <View style={{flexDirection: "row", paddingTop: 10}}>
                                 <View>
@@ -154,7 +167,8 @@ export default function StudentDetailsPage({route,navigation}) {
                                     </TouchableOpacity>
                                 </View>
                                 <View>
-                                    <Button title={"Kurs uchun to'lov qilish"} onPress={() => payForCourse()}/>
+                                    <Button title={"Kurs uchun to'lov qilish"} onPress={() => payForCourse()}
+                                    />
                                 </View>
                             </View>
 
@@ -167,13 +181,27 @@ export default function StudentDetailsPage({route,navigation}) {
 }
 
 const styles = StyleSheet.create({
-    title:{
-      textAlign:"center",
-        fontSize:24,
-        fontWeight:"bold",
-        color:"red"
+    monthName: {
+        fontSize: 20
+    },
+    cardContainer: {
+        paddingBottom: 100,
+        borderRadius: 30
+    },
+    title: {
+        textAlign: "center",
+        fontSize: 24,
+        fontWeight: "bold",
+        color: "red"
+    },
+    description: {
+        textAlign: "center",
+        fontSize: 20,
+        fontWeight: "bold",
+        color: "blue"
     },
     activeText: {
+        fontSize: 20,
         textAlign: "center"
     },
     modalContainer: {
@@ -200,4 +228,21 @@ const styles = StyleSheet.create({
         color: 'white',
         backgroundColor: 'red'
     },
+    payAmount: {
+        fontSize: 30,
+        fontWeight: "bold",
+        color: "red"
+    },
+    payDate: {
+        fontSize: 20,
+        fontWeight: "bold",
+        color: "blue",
+        marginBottom: 20
+    },
+    payButton: {
+        width: 200,
+        height: 50,
+        borderRadius: 30,
+        textAlign: "center"
+    }
 })

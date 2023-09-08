@@ -33,16 +33,18 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public String payForCourse(Integer currentMonthId, String payAmount, UUID adminId, String roleName) {
+    public String payForCourse(Integer currentMonthId, String payAmount, String payIndex, UUID adminId, String roleName) {
         StudentCourse studentCourse = studentCourseRepository.findById(currentMonthId).orElseThrow();
         User admin = usersRepository.findById(adminId).orElseThrow();
         Integer payedTime = checkPayTime(studentCourse);
         Integer now = LocalDateTime.now().getMinute();
-        int i = Integer.parseInt(payAmount);
+        int paymentAmount = Integer.parseInt(payAmount);
+        int paymentIndex = Integer.parseInt(payIndex);
         if (roleName.equals("ROLE_MENTOR")){
             return "error";
         } else if (roleName.equals("ROLE_OWNER") || now - payedTime <= 2 || studentCourse.getPayedAt() == null) {
-            studentCourse.setPaymentAmount(i);
+            studentCourse.setPaymentAmount(paymentAmount);
+            studentCourse.setPaymentIndex(paymentIndex);
             studentCourse.setPayedAt(Timestamp.from(Instant.now()));
             studentCourse.setUser(admin);
             studentCourseRepository.save(studentCourse);

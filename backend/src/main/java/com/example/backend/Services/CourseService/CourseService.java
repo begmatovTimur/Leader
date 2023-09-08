@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface CourseService {
     void addCourse(CourseDTO courseData);
-    String payForCourse(Integer currentMonthId, String payAmount, UUID adminId, String roleName);
+    String payForCourse(Integer currentMonthId, String payAmount, String payIndex, UUID adminId, String roleName);
     String deleteCourse(UUID id, String roleName);
     List<String> getCoursesName();
     List<CourseDTO> getCourses();
