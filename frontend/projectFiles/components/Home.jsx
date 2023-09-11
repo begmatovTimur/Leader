@@ -34,11 +34,7 @@ export default function MyPage({route, navigation}) {
         setUsername("")
         setPassword("")
     }
-
-    function openModal() {
-        setChangeDataModalVisible(true)
-    }
-
+    
     function saveData() {
         const newData = {
             username,
@@ -73,7 +69,6 @@ export default function MyPage({route, navigation}) {
                     style={styles.logo}
                     resizeMode="cover"
                 />
-                <Button onPress={() => openModal()}>Parolni o'zgartirish</Button>
             </View>
 
             <View style={styles.containerCenter}>

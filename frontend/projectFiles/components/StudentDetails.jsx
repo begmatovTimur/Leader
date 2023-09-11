@@ -30,7 +30,6 @@ export default function StudentDetailsPage({route, navigation}) {
             .then((resp) => resp.json())
             .then((json) => {
                 setStudentCourse(json)
-                console.log(JSON.stringify(json))
             })
             .catch((error) => console.error(error))
     }
@@ -111,9 +110,8 @@ export default function StudentDetailsPage({route, navigation}) {
 
     function reset(item) {
         if (item !== undefined) {
-            setPayAmount(item?.paymentAmount)
-            setPayIndex(item?.paymentIndex)
-            console.log(item?.paymentAmount)
+            setPayAmount(item.paymentAmount)
+            setPayIndex(item.paymentIndex)
         } else {
             setPayAmount(0)
             setPayIndex(0)
@@ -170,9 +168,11 @@ export default function StudentDetailsPage({route, navigation}) {
                     <View style={styles.modalContainer}>
                         <View style={styles.modalContent}>
                             <Input placeholder={"To'lov miqdorini kiriting"} keyboardType={"default"}
+                                   defaultValue={payAmount.toString()}
                                    value={payAmount}
                                    onChangeText={(text) => changePaymentAmount(text)}/>
                             <Input placeholder={"To'lov indeksini kiriting"} keyboardType={"default"}
+                                   defaultValue={payAmount.toString()}
                                    value={payIndex}
                                    onChangeText={(text) => changePaymentIndex(text)}/>
 
