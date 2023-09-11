@@ -45,8 +45,8 @@ public class StudentController {
 
     @SneakyThrows
     @GetMapping("/convertExcel")
-    public String convertDataToExcel(@RequestParam("courseId") String courseId, @RequestParam("monthId") String monthId) {
-        return new ObjectMapper().writeValueAsString(studentService.convertToExcelFile(courseId, monthId));
+    public String convertDataToExcel(@RequestParam("courseId") String courseId, @RequestParam("monthId") String monthId, @RequestParam("requestRole") String requestRole) {
+        return new ObjectMapper().writeValueAsString(studentService.convertToExcelFile(courseId, monthId, requestRole));
     }
 
     @SneakyThrows

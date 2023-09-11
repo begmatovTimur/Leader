@@ -6,6 +6,7 @@ import com.example.backend.Enums.MonthEnum;
 import com.example.backend.Projection.CourseProjection;
 import com.example.backend.Projection.StudentCourseProjection;
 import com.example.backend.Projection.StudentProjection;
+import com.example.backend.Projection.StudentTableProjection;
 import com.example.backend.Repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -37,13 +38,15 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public String editStudent(UUID studentId, StudentDTO student, String roleName) {
+        System.out.println(student);
         Role userRole = roleRepository.findByRoleName(roleName);
         if (userRole.getRoleName().equals("ROLE_OWNER")) {
             Student newStudent = generateStudentFromData(student);
             newStudent.setId(studentId);
             List<StudentCourse> allByStudentId = studentCourseRepository.findAllByStudentId(studentId);
-            System.out.println(allByStudentId);
+            Course course = courseRepository.findByName(student.getCourseName());
             for (StudentCourse studentCourse : allByStudentId) {
+                studentCourse.setCourse(course);
                 studentCourse.setStudent(newStudent);
             }
             studentCourseRepository.saveAll(allByStudentId);
@@ -75,8 +78,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> getStudents() {
-        return studentRepository.findAll();
+    public List<StudentTableProjection> getStudents() {
+        return studentRepository.getStudentsForTable();
     }
 
     @Override
@@ -91,7 +94,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Student> getAllStudents(String courseId, String monthId) {
-        if (!monthId.isEmpty() && !courseId.isEmpty() && !courseId.equals("undefined") && !monthId.equals("0") && !monthId.equals("undefined")){
+        if (!monthId.isEmpty() && !courseId.isEmpty() && !courseId.equals("undefined") && !monthId.equals("0") && !monthId.equals("undefined")) {
             List<Student> studentProjections = studentRepository.getStudentsByAll(Integer.valueOf(monthId), UUID.fromString(courseId));
             System.out.println(studentProjections);
             return studentProjections;
@@ -130,10 +133,9 @@ public class StudentServiceImpl implements StudentService {
 
     @SneakyThrows
     @Override
-    public List<StudentProjection> convertToExcelFile(String courseId, String monthId) {
-        System.out.println(courseId);
-        System.out.println(monthId);
-        if (!monthId.isEmpty() && !courseId.isEmpty() && !courseId.equals("undefined") && !monthId.equals("0") && !monthId.equals("undefined")){
+    public List<StudentProjection> convertToExcelFile(String courseId, String monthId, String requestRole) {
+        System.out.println(requestRole);
+        if (!monthId.isEmpty() && !courseId.isEmpty() && !courseId.equals("undefined") && !monthId.equals("0") && !monthId.equals("undefined")) {
             List<StudentProjection> studentProjections = studentRepository.convertToExcelFileByAll(Integer.valueOf(monthId), UUID.fromString(courseId));
             System.out.println(studentProjections);
             return studentProjections;
@@ -145,7 +147,10 @@ public class StudentServiceImpl implements StudentService {
         } else if (monthId.equals("0") && !courseId.isEmpty() && !courseId.equals("undefined")) {
             return studentRepository.convertToExcelFileByCourse(UUID.fromString(courseId));
         }
-        return studentRepository.convertToExcelFileByNothing();
+        if (requestRole.equals("ROLE_OWNER")) {
+            return studentRepository.convertToExcelFileByNothing();
+        }
+        return null;
     }
 
 

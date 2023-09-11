@@ -22,6 +22,7 @@ const Students = ({route, navigation}) => {
     const [modalVisible, setModalVisible] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
+    const [permissionForExcel, setPermissionForExcel] = useState(false)
     const [courses, setCourses] = useState([])
     const [coursesForFilter, setCoursesForFilter] = useState([])
     const [monthsForFilter, setMonthsForFilter] = useState([])
@@ -73,22 +74,27 @@ const Students = ({route, navigation}) => {
     }
 
     function getExcelData(monthId) {
-        console.log(monthId)
-        fetch(baseUrl(`student/convertExcel?courseId=${selectedGroup.id}&monthId=${monthId}`))
+        fetch(baseUrl(`student/convertExcel?courseId=${selectedGroup.id}&monthId=${monthId}&requestRole=${currentUserRole}`))
             .then((resp) => resp.json())
             .then((json) => {
-                const studentExcelData = []
-                json.forEach(student => {
-                    const {firstName, lastName, age, payments} = student;
-                    const studentPayments = JSON.parse(payments);
-                    const row = {'First Name': firstName, 'Last Name': lastName, 'Age': age};
-                    studentPayments.forEach(payment => {
-                        row[payment.month] = payment.amount;
+                console.log(json)
+                if (json===null){
+                    setPermissionForExcel(false)
+                } else {
+                    setPermissionForExcel(true)
+                    const studentExcelData = []
+                    json.forEach(student => {
+                        const {firstName, lastName, age, payments} = student;
+                        const studentPayments = JSON.parse(payments);
+                        const row = {'First Name': firstName, 'Last Name': lastName, 'Age': age};
+                        studentPayments.forEach(payment => {
+                            row[payment.month] = payment.amount;
+                        });
+                        studentExcelData.push(row);
                     });
-                    studentExcelData.push(row);
-                });
 
-                setExcelData(studentExcelData)
+                    setExcelData(studentExcelData)
+                }
             })
             .catch((error) => console.error(error))
     }
@@ -178,17 +184,18 @@ const Students = ({route, navigation}) => {
     }
 
     function reset(item) {
-        setCourseName("")
         if (item !== undefined) {
             setModalVisible(true)
             setCurrentStudentId(item.id)
             setFirstName(item.firstName)
             setLastName(item.lastName)
             setAge(item.age)
+            setCourseName(item.courseName)
         } else {
             setFirstName("")
             setLastName("")
             setAge("")
+            setCourseName("")
         }
     }
 
@@ -208,36 +215,41 @@ const Students = ({route, navigation}) => {
     }
 
     const downloadExcel = async () => {
-        const ws = XLSX.utils.json_to_sheet(excelData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-        // Calculate and set column widths based on content width.
-        const columnWidths = {};
-        XLSX.utils.sheet_to_json(ws, { header: 1 }).forEach((row) => {
-            row.forEach((value, columnIndex) => {
-                const cellWidth = value ? value.toString().length + 2 : 10; // Adjust the default width as needed.
-                if (!columnWidths[columnIndex] || cellWidth > columnWidths[columnIndex]) {
-                    columnWidths[columnIndex] = cellWidth;
-                }
+        if (permissionForExcel){
+            const ws = XLSX.utils.json_to_sheet(excelData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+            // Calculate and set column widths based on content width.
+            const columnWidths = {};
+            XLSX.utils.sheet_to_json(ws, { header: 1 }).forEach((row) => {
+                row.forEach((value, columnIndex) => {
+                    const cellWidth = value ? value.toString().length + 2 : 10; // Adjust the default width as needed.
+                    if (!columnWidths[columnIndex] || cellWidth > columnWidths[columnIndex]) {
+                        columnWidths[columnIndex] = cellWidth;
+                    }
+                });
             });
-        });
 
-        // Convert column widths to XLSX format.
-        const cols = Object.keys(columnWidths).map((key) => ({
-            wch: columnWidths[key],
-        }));
+            // Convert column widths to XLSX format.
+            const cols = Object.keys(columnWidths).map((key) => ({
+                wch: columnWidths[key],
+            }));
 
-        ws['!cols'] = cols;
-        const excelFileBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'base64'});
+            ws['!cols'] = cols;
+            const excelFileBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'base64'});
 
-        const fileUri = `${FileSystem.cacheDirectory}studentlar ma'lumoti.xlsx`;
+            const fileUri = `${FileSystem.cacheDirectory}studentlar ma'lumoti.xlsx`;
 
-        await FileSystem.writeAsStringAsync(fileUri, excelFileBuffer, {
-            encoding: FileSystem.EncodingType.Base64,
-        });
+            await FileSystem.writeAsStringAsync(fileUri, excelFileBuffer, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
 
-        Sharing.shareAsync(fileUri, {mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-        setExcelData([])
+            Sharing.shareAsync(fileUri, {mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+            setExcelData([])
+        } else {
+            alert("siz ma'lumotlarni excel faylga o'tkazolmaysiz")
+        }
+
     };
 
     function deleteStudent(id) {
@@ -273,7 +285,6 @@ const Students = ({route, navigation}) => {
     }
 
     // function filterStudentsByCourse(id) {
-    //     console.log(id)
     //     fetch(baseUrl("student/" + id))
     //         .then((resp) => resp.json())
     //         .then((json) => {
@@ -283,7 +294,6 @@ const Students = ({route, navigation}) => {
     //         .catch((error) => console.error(error))
     // }
     function filterStudentByAll(monthId, courseId){
-        console.log("Hello")
         fetch(baseUrl(`student/all?courseId=${courseId}&monthId=${monthId}`))
             .then((resp) => resp.json())
             .then((json) => {
@@ -297,7 +307,6 @@ const Students = ({route, navigation}) => {
     //         .then((resp) => resp.json())
     //         .then((json) => {
     //             setStudents(json)
-    //             console.log(monthId)
     //             getExcelData(monthId)
     //         })
     //         .catch((error) => console.error(error))
@@ -390,7 +399,6 @@ const Students = ({route, navigation}) => {
                 renderItem={renderRow}
                 keyExtractor={(item) => item.id}
             />
-
             <Modal
                 visible={modalVisible}
                 animationType="slide"
@@ -407,15 +415,15 @@ const Students = ({route, navigation}) => {
                         <Input placeholder={"O'quvchi yoshini kiriting"} keyboardType={"default"} value={age}
                                onChangeText={(text) => changeAge(text)}/>
                         {
-                            isEdit ? "" : <SelectDropdown
-                                defaultButtonText={"O'quvchi qaysi kursda o'qishini tanlang"}
+                           /* isEdit ? "" :*/ <SelectDropdown
+                                defaultButtonText={courseName!==""?courseName:"O'quvchi qaysi kursda o'qishini tanlang"}
                                 buttonStyle={{width: "100%"}}
                                 data={courses}
                                 onSelect={(selectedItem, index) => {
                                     setCourseName(selectedItem)
                                 }}
                                 buttonTextAfterSelection={(selectedItem, index) => {
-                                    return selectedItem
+                                    return courseName
                                 }}
                                 rowTextForSelection={(item, index) => {
                                     return item

@@ -4,6 +4,7 @@ import com.example.backend.Entity.Student;
 import com.example.backend.Projection.CourseProjection;
 import com.example.backend.Projection.StudentCourseProjection;
 import com.example.backend.Projection.StudentProjection;
+import com.example.backend.Projection.StudentTableProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,6 +12,15 @@ import java.util.List;
 import java.util.UUID;
 
 public interface StudentRepository extends JpaRepository<Student, UUID> {
+    @Query(value = """
+        SELECT s.id, s.first_name, s.last_name, s.age, s.register_date, c.name AS course_name
+        FROM student s
+                 INNER JOIN student_course sc on s.id = sc.student_id
+                INNER JOIN course c on c.id = sc.course_id
+        GROUP BY s.id, s.first_name, s.last_name, s.age, s.register_date, c.name
+""", nativeQuery = true)
+    List<StudentTableProjection> getStudentsForTable();
+
     @Query(value = """
             select c.id, c.name
             from student_course sc
@@ -116,6 +126,7 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
             """, nativeQuery = true)
     List<Student> getStudentsByGroup(UUID id);
 
+
     @Query(value = """
   SELECT s.id, s.age, s.first_name, s.last_name, s.register_date
     FROM student s
@@ -148,11 +159,13 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
 
     @Query(value = """
   SELECT s.id, s.age, s.first_name, s.last_name, s.register_date
-    FROM student s
-    INNER JOIN student_course sc ON s.id = sc.student_id
-    INNER JOIN month m ON m.id = sc.month_id
-    WHERE sc.payment_amount = 0 AND m.id<=:monthId AND (sc.course_id = :courseId)
-    GROUP BY s.id, s.age, s.first_name, s.last_name, sc.student_id, s.register_date                                                                            
+  FROM student s
+           INNER JOIN student_course sc ON s.id = sc.student_id
+           INNER JOIN month m ON m.id = sc.month_id
+  WHERE sc.payment_amount = 0
+    AND m.id <= :monthId
+    AND (sc.course_id = :courseId)
+  GROUP BY s.id, s.age, s.first_name, s.last_name, sc.student_id, s.register_date                                                                            
 """, nativeQuery = true)
     List<Student> getStudentsByAll(Integer monthId, UUID courseId);
 }

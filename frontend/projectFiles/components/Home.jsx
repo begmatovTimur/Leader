@@ -100,7 +100,7 @@ export default function MyPage({route, navigation}) {
                                 resizeMode="cover"
 
                             />
-                            <Text style={styles.title} onPress={() => alert("salom")}>Studentlar bo'limi</Text>
+                            <Text style={styles.title}>Studentlar bo'limi</Text>
                         </TouchableOpacity>
 
                     </View>
