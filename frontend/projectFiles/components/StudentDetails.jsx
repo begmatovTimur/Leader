@@ -28,7 +28,10 @@ export default function StudentDetailsPage({route, navigation}) {
     function getStudentCourse() {
         fetch(baseUrl(`student/timeTable/${courseId}/${studentId}`))
             .then((resp) => resp.json())
-            .then((json) => setStudentCourse(json))
+            .then((json) => {
+                setStudentCourse(json)
+                console.log(JSON.stringify(json))
+            })
             .catch((error) => console.error(error))
     }
 
@@ -43,35 +46,39 @@ export default function StudentDetailsPage({route, navigation}) {
     }
 
     function payForCourse() {
-        fetch(baseUrl(`course/coursePayment/${currentMonthId}`), {
-            method: 'PATCH',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                "isAdmin": currentUserRole
-            },
-            body: JSON.stringify(
-                {
-                    payAmount,
-                    payIndex,
-                    adminId: loginUserId
-                }
-            ),
-        })
-            .then((response) => response.json())
-            .then((responseData) => {
-                if (responseData === "success") {
-                    setModalVisible(false)
-                    getStudentCourse()
-                    reset()
-                } else if (responseData === "error") {
-                    alert("to'lovda xatolik");
-                    setPayIndex(null)
-                }
+        if (payIndex&&payAmount){
+            fetch(baseUrl(`course/coursePayment/${currentMonthId}`), {
+                method: 'PATCH',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    "isAdmin": currentUserRole
+                },
+                body: JSON.stringify(
+                    {
+                        payAmount,
+                        payIndex,
+                        adminId: loginUserId
+                    }
+                ),
             })
-            .catch((e) => {
-                navigation.navigate('Error');
-            });
+                .then((response) => response.json())
+                .then((responseData) => {
+                    if (responseData === "success") {
+                        setModalVisible(false)
+                        getStudentCourse()
+                        reset()
+                    } else if (responseData === "error") {
+                        alert("to'lovda xatolik");
+                        setPayIndex(null)
+                    }
+                })
+                .catch((e) => {
+                    navigation.navigate('Error');
+                });
+        }else{
+            alert("Index bilan miqdorini kiriting!")
+        }
     }
 
     function changeActiveStudent(studentActive, monthId) {
@@ -138,6 +145,7 @@ export default function StudentDetailsPage({route, navigation}) {
 
                             <Text style={styles.payAmount}>To'lov Qiymati: {item.paymentAmount}</Text>
                             <Text style={styles.payDate}>To'lov Sanasi: {item.payedAt}</Text>
+                            <Text style={styles.payDate}>To'lov Indexi: {item.paymentIndex}</Text>
                             <Button onPress={() => viewModal(item.id)} buttonStyle={styles.payButton}>
                                 Oy uchun to'lov qilish
                             </Button>

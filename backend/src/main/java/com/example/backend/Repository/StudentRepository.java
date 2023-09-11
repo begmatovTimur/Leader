@@ -34,6 +34,7 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
             select sc.id,
                    sc.active,
                    sc.payment_amount,
+                   sc.payment_index,
                    s.first_name,
                    m.name                                      as month_name,
                    TO_CHAR(sc.payed_at, 'YYYY-"yil" DD-Month') AS payed_at

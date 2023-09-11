@@ -11,6 +11,8 @@ public interface StudentCourseProjection {
     Boolean getActive();
     @Value("#{target.payment_amount}")
     Integer getPaymentAmount();
+    @Value("#{target.payment_index}")
+    String getPaymentIndex();
     @Value("#{target.first_name}")
     String getFirstName();
     @Value("#{target.month_name}")
