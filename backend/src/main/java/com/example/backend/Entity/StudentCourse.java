@@ -28,6 +28,7 @@ public class StudentCourse {
     private User user;
     private Boolean active;
     private Integer paymentAmount;
+    @Column(nullable = false)
     private Integer paymentIndex;
     private Timestamp createdAt;
     private Timestamp updatedAt;

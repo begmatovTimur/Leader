@@ -35,9 +35,10 @@ export default function StudentDetailsPage({route, navigation}) {
             .catch((error) => console.error(error))
     }
 
-    function viewModal(id) {
-        setCurrentMonthId(id)
+    function viewModal(item) {
+        setCurrentMonthId(item.id)
         setModalVisible(true)
+        reset(item)
     }
 
     function closeModal() {
@@ -46,7 +47,7 @@ export default function StudentDetailsPage({route, navigation}) {
     }
 
     function payForCourse() {
-        if (payIndex&&payAmount){
+        if (payIndex && payAmount) {
             fetch(baseUrl(`course/coursePayment/${currentMonthId}`), {
                 method: 'PATCH',
                 headers: {
@@ -76,7 +77,7 @@ export default function StudentDetailsPage({route, navigation}) {
                 .catch((e) => {
                     navigation.navigate('Error');
                 });
-        }else{
+        } else {
             alert("Index bilan miqdorini kiriting!")
         }
     }
@@ -108,8 +109,15 @@ export default function StudentDetailsPage({route, navigation}) {
             });
     }
 
-    function reset() {
-        setPayAmount(0)
+    function reset(item) {
+        if (item !== undefined) {
+            setPayAmount(item?.paymentAmount)
+            setPayIndex(item?.paymentIndex)
+            console.log(item?.paymentAmount)
+        } else {
+            setPayAmount(0)
+            setPayIndex(0)
+        }
     }
 
     function changePaymentAmount(text) {
@@ -146,7 +154,7 @@ export default function StudentDetailsPage({route, navigation}) {
                             <Text style={styles.payAmount}>To'lov Qiymati: {item.paymentAmount}</Text>
                             <Text style={styles.payDate}>To'lov Sanasi: {item.payedAt}</Text>
                             <Text style={styles.payDate}>To'lov Indexi: {item.paymentIndex}</Text>
-                            <Button onPress={() => viewModal(item.id)} buttonStyle={styles.payButton}>
+                            <Button onPress={() => viewModal(item)} buttonStyle={styles.payButton}>
                                 Oy uchun to'lov qilish
                             </Button>
                         </View>
