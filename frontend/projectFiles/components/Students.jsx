@@ -19,7 +19,7 @@ const Students = ({route, navigation}) => {
     const [courseName, setCourseName] = useState("")
     const [currentStudentId, setCurrentStudentId] = useState("")
     const [currentUserRole, setCurrentUserRole] = useState("")
-    const [modalVisible, setModalVisible] = useState(false)
+    const [modalVisible, etModalVisible] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [courses, setCourses] = useState([])
@@ -124,7 +124,6 @@ const Students = ({route, navigation}) => {
                         if (responseData === "success") {
                             setIsLoading(false)
                             setIsEdit(false)
-                            setModalVisible(false)
                             setCurrentStudentId("")
                             reset()
                             getStudents()
