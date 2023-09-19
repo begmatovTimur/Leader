@@ -34,7 +34,7 @@ export default function MyPage({route, navigation}) {
         setUsername("")
         setPassword("")
     }
-    
+
     function saveData() {
         const newData = {
             username,

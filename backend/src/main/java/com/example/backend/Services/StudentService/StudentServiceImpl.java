@@ -157,7 +157,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public String deleteStudent(UUID id, String roleName) {
-        System.out.println(roleName);
+        System.out.println(id);
         Role userRole = roleRepository.findByRoleName(roleName);
         if (userRole.getRoleName().equals("ROLE_OWNER")) {
             studentCourseRepository.deleteAllByStudentId(id);

@@ -207,14 +207,15 @@ const styles = StyleSheet.create({
     headerRow: {
         flexDirection: 'row',
         borderBottomWidth: 1,
-        borderColor: '#cccccc',
+        borderColor: '#000000',
         paddingVertical: 5,
-        backgroundColor: '#abaaaa'
+        backgroundColor: '#000000'
     },
     headerCell: {
         flex: 1,
         fontWeight: 'bold',
         textAlign: 'center',
+        color:"#ffffff"
     },
     row: {
         flexDirection: 'row',

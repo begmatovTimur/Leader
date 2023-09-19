@@ -19,7 +19,7 @@ const Students = ({route, navigation}) => {
     const [courseName, setCourseName] = useState("")
     const [currentStudentId, setCurrentStudentId] = useState("")
     const [currentUserRole, setCurrentUserRole] = useState("")
-    const [modalVisible, etModalVisible] = useState(false)
+    const [modalVisible, setModalVisible] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [permissionForExcel, setPermissionForExcel] = useState(false)
@@ -129,7 +129,7 @@ const Students = ({route, navigation}) => {
                     .then((responseData) => {
                         if (responseData === "success") {
                             setIsLoading(false)
-                            setIsEdit(false)
+                            // setIsEdit(false)
                             setCurrentStudentId("")
                             reset()
                             getStudents()
@@ -283,15 +283,6 @@ const Students = ({route, navigation}) => {
         setAge(numericValue);
     }
 
-    // function filterStudentsByCourse(id) {
-    //     fetch(baseUrl("student/" + id))
-    //         .then((resp) => resp.json())
-    //         .then((json) => {
-    //             setStudents(json)
-    //             getExcelData(selectedMonth.id)
-    //         })
-    //         .catch((error) => console.error(error))
-    // }
     function filterStudentByAll(monthId, courseId){
         fetch(baseUrl(`student/all?courseId=${courseId}&monthId=${monthId}`))
             .then((resp) => resp.json())
@@ -301,15 +292,6 @@ const Students = ({route, navigation}) => {
             })
             .catch((error) => console.error(error))
     }
-    // function filterStudentsByDebt(monthId) {
-    //     fetch(baseUrl("student/debts/" + monthId))
-    //         .then((resp) => resp.json())
-    //         .then((json) => {
-    //             setStudents(json)
-    //             getExcelData(monthId)
-    //         })
-    //         .catch((error) => console.error(error))
-    // }
 
     const renderRow = ({item}) => (
         <TouchableOpacity
@@ -320,8 +302,8 @@ const Students = ({route, navigation}) => {
                 registerDate:item.registerDate
             })}>
             <View style={styles.row}>
-                <Text style={styles.cell}>{item.firstName}</Text>
                 <Text style={styles.cell}>{item.lastName}</Text>
+                <Text style={styles.cell}>{item.firstName}</Text>
                 <Text style={styles.cell}>{item.age}</Text>
                 <TouchableOpacity style={styles.deleteButton} onPress={() => deleteStudent(item.id)}>
                     <FontAwesome name={"trash"} style={styles.buttonText}/>
@@ -388,8 +370,8 @@ const Students = ({route, navigation}) => {
                 />
             </View>
             <View style={styles.headerRow}>
-                <Text style={styles.headerCell}>O'quvchi Ismi</Text>
                 <Text style={styles.headerCell}>O'quvchi Familiyasi</Text>
+                <Text style={styles.headerCell}>O'quvchi Ismi</Text>
                 <Text style={styles.headerCell}>O'quvchi Yoshi</Text>
                 <Text style={styles.headerCell}>Qurilmalar</Text>
             </View>
